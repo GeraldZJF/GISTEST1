@@ -1,0 +1,123 @@
+<body>
+                rows:<input type="number"  id="row"/><!--用户输入行数-->
+                <br>
+                columns:<input type="number"  id="column"/><!--用户输入列数-->
+                <br>
+                starting pointx:<input type="number"  id="pointx"/><!--用户输入马的起始横坐标-->
+                <br>
+                starting pointy:<input type="number"  id="pointy"/><!--用户输入马的起始纵坐标-->
+                <br>
+                <button onclick="myfunction()">Show all routes
+                </button>
+                
+                <script>
+                
+                var direction = 8  //跳跃方向
+                var maxstep = 100 //最大步数
+                var num;
+                var dx = new Array(0, 1, 2, 2, 1, -1, -2, -2, -1 )//表示方向
+                var dy = new Array(0, 2, 1, -1, -2, 2, 1, -1, -2 )//表示方向
+                
+                var coordinate = new Array()//储存position路径坐标,第一行存x，第二行存y
+                for(var i=0;i<maxstep + 1;i++)
+                {
+                        coordinate[i] = new Array(2)
+                }
+                
+                
+                function Move(x , y , step , columnX, rowY,position) {
+                        var t1, t2, t3, t4, t5, t6, t7, t8;
+                        var x1, y1;
+                
+                        Route(step, columnX, rowY,position);
+                        for (var k = 1; k <= direction; k++) {
+                                //朝八个方向中的某个方向跳跃
+                                x1 = x + dx[k];
+                                y1 = y + dy[k];
+                
+                                //跳出边界，进入下一种路径的查找
+                                if (x1 > (columnX-1) || y1 > (rowY-1) || x1 < 0 || y1 < 0)
+                                        continue;
+                
+                                t1 = (x1 >= 0) && (x1 <= (columnX-1));//左右边界内
+                                t2 = (y1 >= 0) && (y1 <= (rowY-1));//上下边界内
+                
+                                                                                                
+                                t3 = (x1 == (columnX-1));
+                                t4 = (y1 == (rowY-1));
+                                t5 = (x1 == 0);
+                                t6 = (y1 == 0);
+                                t7 = (x1 == coordinate[0][0]);
+                                t8 = (y1 == coordinate[0][1]);
+                
+                                if (t1 && t2) {//在棋盘内
+                                                           //记录位置
+                                        if (!Feasibility(x1 , y1,position)) {//返回false表示没有重复，可以继续寻找路径
+                                                                                         //continue;
+                                                coordinate[step][0] = x1;
+                                                coordinate[step][1] = y1;
+                                                if (t7 && t8) {
+                                                        num++;
+                                                        
+                                                        document.write("answer"+num+":");
+                
+                                                        for (var i = 0; i <= step; i++) {
+                                                                document.write("("+coordinate[i][0]+","+ coordinate[i][1]+")");
+                                                                if (i != step)
+                                                                        document.write(" -> ");
+                                                        }
+                                                        document.write("<br>");
+                                                }
+                                                else {
+                                                        Move(x1, y1, step + 1,columnX,rowY,position);
+                                                }
+                                        }
+                                }
+                        }
+                }
+                
+                function Feasibility(x , y, position) {
+                        var judge = false;
+                
+                        if (position[y][x])//重复结点，错误路径
+                                judge = true;
+                        else
+                                position[y][x] = 1;
+                        return judge;//false为可行路径
+                }
+                
+                function Route(step, columnX, rowY,position) {
+                        for (var i = 0; i < (rowY-1); i++)
+                                for (var j = 0; j < (columnX-1); j++)
+                                        position[i][j] = 0;
+                        for (var i = 1; i < step; i++) {
+                                position[coordinate[i][1]][coordinate[i][0]] = 1;
+                        }
+                }
+                
+                function myfunction()
+                {
+                        num = 0;//方法总数
+                        var columnX = document.getElementById("column").value; //用户输入的棋盘列数
+                        var rowY = document.getElementById("row").value;       //用户输入的棋盘行数
+
+                        var position = new Array()//棋盘
+                        for(var i=0;i<rowY;i++)
+                        {
+                            position[i] = new Array(columnX)
+                            for(var j=0;j<columnX;j++)
+                            {
+                                position[i][j] = 0
+                            }
+                        }
+
+                        coordinate[0][0] = document.getElementById("pointx").value;//初始位置x
+                        coordinate[0][1] = document.getElementById("pointy").value;//初始位置y
+                        
+                        Move(0 ,0 , 1, columnX, rowY,position);
+                        document.write("the number of answers is "+num);
+                }
+				
+                </script>
+                
+                </body>
