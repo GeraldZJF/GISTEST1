@@ -1,0 +1,137 @@
+<body>
+     
+<script> 
+
+//function struct()               //定义每个工作的费时、最后完成的期限及工作的价值的结构体
+//{     
+//       this.id = 'a';           // 任务序号
+//       this.time = 0 ;          // 费时
+//       this.deadline = 0;       // 截止日期 
+//       this.profit = 0;         // 价值 
+//}
+     
+
+//function myfunction()
+
+//var WORK_A = new struct( 'A', 4, 10, 2); 
+//var WORK_B = new struct( 'B', 3,  8, 3); 
+//var WORK_C = new struct( 'C', 2,  4, 3); 
+//var WORK_D = new struct( 'D', 1,  2, 6); 
+
+var work =                         //将四件工作1234分别命名为ABCD四件工作，存入费时、最后完成期限和效益
+[
+{id:'a',time:4,deadline:10,profit:2},
+{id:'b',time:3,deadline: 8,profit:3},
+{id:'c',time:2,deadline: 4,profit:3},
+{id:'d',time:1,deadline: 2,profit:6},
+]
+
+for (i = 1; i < 4; i++)//使用插入排序每个工作按照效益从大到小进行排序
+{  
+    var i = 0;  
+    var j = 0;  
+    var k = 0;  
+    var temp = 0;  
+      
+    for(i = 1;i < 4;i++)  
+    {  
+        k = i;
+        tempall = work[k];  
+        temp = work[k].profit;  
+       
+        for(j = i-1;j >= 0;j--)  
+        {  
+            if(work[j].profit < temp)  
+            {  
+                work[j+1] = work[j];  
+                k = j;  //记下移动的位置   
+            }     
+        }     
+        work[k] = tempall;//插入   
+    }  
+}  
+
+for (i = 0; i<3; i++)//遇到相同效益的工作时，把完成期限比较晚的工作往后排
+{
+    if (work[i].profit == work[i + 1].profit)
+    {
+        if (work[i].deadline>work[i + 1].deadline)
+        {
+                    temp = work[i];
+                    work[i] = work[i + 1];
+                    work[i + 1] = temp;
+        }
+    }
+}
+
+//for(i = 0;i < 4; i++){
+//document.write(work[i].id);}
+
+var deadtime;                     //当前工作期限
+var time;                         //当前工作时间                   
+var sum = 0;                      //工作总天数
+var workday = new Array(10);      //当天是否有工作，默认没有工作
+var workdayabcd = new Array(11);  //输出结果数组
+
+for (i = 0; i < 4; i++)
+{
+  sum += work[i].time;
+}          
+            
+for (i = 0; i <= sum; i++)   //将所有没有工作的日期定为-1，workday[0]无用
+{
+  workday[i] = -1;
+}
+    
+for (i = 0; i < 4; i++)
+{
+    deadtime = work[i].deadline;
+    time = work[i].time;
+    if (workday[deadtime] == -1)//当天没有工作
+    {
+        workday[deadtime] = i;
+        time--;
+    }
+     
+    for (j = deadtime - 1; j >= 0; j--)//查找之前没有工作的日子
+    {
+        if (!time)
+        {
+            break;
+        }
+        
+        if (workday[j] == -1)
+        {
+           workday[j] = i;
+           time--;
+        }
+    }
+}
+
+for(i = 1;i < 11; i++)
+{
+    switch(workday[i])
+    {
+        case 3:
+        workdayabcd[i] = 'A'  
+        break;
+        case 2:
+        workdayabcd[i] = 'B'  
+        break;
+        case 1:
+        workdayabcd[i] = 'C'  
+        break;
+        case 0:
+        workdayabcd[i] = 'D'  
+        break;
+    }
+} 
+
+document.write('Ten days in turn to do:');
+for (i = 1; i < 11; i++)
+{   
+    document.write(workdayabcd[i] + ' ');
+}
+
+</script>
+</body>
