@@ -1,0 +1,269 @@
+<!DOCTYPE html> 
+
+<head>
+    <script type="text/javascript"></script>            
+    <meta charset = "utf-8">
+</head>
+
+<body>
+<!--画图按钮-->
+<button onclick="myfunction()">画图
+</button>
+<br>
+<br>
+
+<!--左斜变换-->
+①左斜变换： 
+<button onclick="Transformzuoxie()">左斜变换
+</button>
+<br>
+<br>
+
+<!--耸肩变换-->
+②耸肩变换： 
+<button onclick="Transformsongjian()">耸肩变换
+</button>
+<br>
+<br>
+
+<!--比例变换-->
+③比例变换：
+<br>
+请输入放大倍数（可为小数）：
+<input type="text" name="bilitext" id="bili"> 
+<button onclick="Transformbili()">比例变换
+</button>
+<br>
+<br>
+
+<!--旋转变换-->
+④旋转变换：
+<br>
+请输入旋转变换的中心点与角度： 
+中心点X:<input type="text" name="xxx" id="xx">
+中心点Y:<input type="text" name="yyy" id="yy">
+顺时针旋转角度:<input type="text" name="jiaodudu" id="jiaodu">
+<button onclick="Transformxuanzhuan()">旋转变换
+</button>
+<br>
+<br>
+
+<!--对称变换-->
+⑤将字体关于直线y=x对称 
+<button onclick="Transformduicheng()">对称变换
+</button>
+<br>
+<br>
+
+<!--平移变换的下拉框-->
+⑥请输入平移变换的XY方向距离(可为负数)： 
+X方向:<input type="text" name="distance1" id="x">
+Y方向:<input type="text" name="distance2" id="y">
+<button onclick="Transformpingyi()">平移变换
+</button>
+<br>
+<br>
+
+<!--画布定义，分别显示原始图像与变换后的图像-->
+<canvas id="canvas" width="400" height="400"           
+style = "border : 1px solid #FF0000">
+</canvas>
+<canvas id="canvastransform" width="400" height="400"         
+style = "border : 1px solid #FF0000">
+</canvas>
+
+<script>
+//定义画布与储存geo数据的数组
+var arrx = new Array(5);
+var arry = new Array(5);
+arrx[0] = new Array(13,18,20,20,70,70,60);
+arrx[1] = new Array(30,60);
+arrx[2] = new Array(45,45);
+arrx[3] = new Array(28,62)
+arrx[4] = new Array(33,57,57,33,33);
+arry[0] = new Array(107,90,80,43,43,102,105);
+arry[1] = new Array(58,58);
+arry[2] = new Array(48,70);
+arry[3] = new Array(68,68)
+arry[4] = new Array(80,80,93,93,80);
+var arrx1 = new Array(5);
+var arry1 = new Array(5);
+arrx1[0] = new Array(7);
+arrx1[1] = new Array(2);
+arrx1[2] = new Array(2);
+arrx1[3] = new Array(2)
+arrx1[4] = new Array(5);
+arry1[0] = new Array(7);
+arry1[1] = new Array(2);
+arry1[2] = new Array(2);
+arry1[3] = new Array(2)
+arry1[4] = new Array(5);
+var canvastransform = document.getElementById('canvastransform'); 
+var cxtt = canvastransform.getContext('2d');
+cxtt.lineWidth = 3; 
+
+//左斜函数
+function Transformzuoxie()
+{
+    for(var i = 0;i < arrx.length;i++)
+    {
+        for(var j = 0;j < arrx[i].length;j++)
+        {
+            arrx1[i][j] = Math.floor(arrx[i][j]+0.5*arry[i][j]);
+            arry1[i][j] = arry[i][j]; 
+        }
+    }
+    for(var i = 0;i < arrx.length;i++)
+    { 
+        cxtt.moveTo(arrx1[i][0],arry1[i][0]);
+        for(var j = 1;j < arrx[i].length;j++)
+        {
+            cxtt.lineTo(arrx1[i][j],arry1[i][j]); 
+        }
+        cxtt.stroke();
+    }     
+}
+
+//耸肩函数
+function Transformsongjian()
+{
+    for(var i = 0;i < arrx.length;i++)
+    {
+        for(var j = 0;j < arrx[i].length;j++)
+        {
+            arrx1[i][j] = arrx[i][j];
+            arry1[i][j] = Math.floor(arry[i][j]-0.5*arrx[i][j]); 
+        }
+    }
+    for(var i = 0;i < arrx.length;i++)
+    { 
+        cxtt.moveTo(arrx1[i][0],arry1[i][0]);
+        for(var j = 1;j < arrx[i].length;j++)
+        {
+            cxtt.lineTo(arrx1[i][j],arry1[i][j]); 
+        }
+        cxtt.stroke();
+    }     
+}
+
+//比例函数
+function Transformbili()
+{
+    var bili = document.getElementById('bili').value;
+    for(var i = 0;i < arrx.length;i++)
+    {
+        for(var j = 0;j < arrx[i].length;j++)
+        {
+            arrx1[i][j] = Math.floor(Number(bili)*arrx[i][j]); 
+            arry1[i][j] = Math.floor(Number(bili)*arry[i][j]); 
+        }
+    }
+    for(var i = 0;i < arrx.length;i++)
+    { 
+        cxtt.moveTo(arrx1[i][0],arry1[i][0]);
+        for(var j = 1;j < arrx[i].length;j++)
+        {
+            cxtt.lineTo(arrx1[i][j],arry1[i][j]); 
+        }
+        cxtt.stroke();
+    }     
+}
+
+//旋转函数
+function Transformxuanzhuan()
+{
+    var x = document.getElementById('xx').value;
+    var y = document.getElementById('yy').value;  
+    var jiaodu = document.getElementById('jiaodu').value; 
+
+    for(var i = 0;i < arrx.length;i++)
+    {
+        for(var j = 0;j < arrx[i].length;j++)
+        {
+            arrx[i][j] = arrx[i][j] - Number(x);
+            arry[i][j] = arry[i][j] - Number(y);
+            arrx[i][j] = Math.floor((Math.cos(Number(jiaodu)*Math.PI/180)*arrx[i][j] - Math.sin(Number(jiaodu)*Math.PI/180)*arry[i][j]));
+            arry[i][j] = Math.floor((Math.sin(Number(jiaodu)*Math.PI/180)*arrx[i][j] + Math.cos(Number(jiaodu)*Math.PI/180)*arry[i][j]));
+            arrx1[i][j] = arrx[i][j] + Number(x);
+            arry1[i][j] = arry[i][j] + Number(y);
+        }
+    }
+    for(var i = 0;i < arrx.length;i++)
+    { 
+        cxtt.moveTo(arrx1[i][0],arry1[i][0]);
+        for(var j = 1;j < arrx[i].length;j++)
+        {
+            cxtt.lineTo(arrx1[i][j],arry1[i][j]); 
+        }
+        cxtt.stroke();  
+    }     
+}
+
+//对称变换
+function Transformduicheng()
+{
+    for(var i = 0;i < arrx.length;i++)
+    {
+        for(var j = 0;j < arrx[i].length;j++)
+        {
+            arrx1[i][j] = arry[i][j];
+            arry1[i][j] = arrx[i][j]; 
+        }
+    }
+    for(var i = 0;i < arrx.length;i++)
+    { 
+        cxtt.moveTo(arrx1[i][0],arry1[i][0]);
+        for(var j = 1;j < arrx[i].length;j++)
+        {
+            cxtt.lineTo(arrx1[i][j],arry1[i][j]); 
+        }
+        cxtt.stroke();  
+    }     
+}
+
+
+//平移函数
+function Transformpingyi()
+{
+    var distancex = document.getElementById('x').value;
+    var distancey = document.getElementById('y').value;  
+
+    for(var i = 0;i < arrx.length;i++)
+    {
+        for(var j = 0;j < arrx[i].length;j++)
+        {
+                arrx1[i][j] = arrx[i][j] + Number(distancex);
+                arry1[i][j] = arry[i][j] + Number(distancey); 
+        }
+    }
+    for(var i = 0;i < arrx.length;i++)
+    { 
+        cxtt.moveTo(arrx1[i][0],arry1[i][0]);
+        for(var j = 1;j < arrx[i].length;j++)
+        {
+            cxtt.lineTo(arrx1[i][j],arry1[i][j]); 
+        }
+        cxtt.stroke();  
+    }     
+}
+
+//画图函数 
+function myfunction()
+{
+    var canvas = document.getElementById('canvas'); 
+    var cxt = canvas.getContext('2d');
+    cxt.lineWidth = 3;
+    for(var i = 0;i < arrx.length;i++)
+    { 
+        cxt.moveTo(arrx[i][0],arry[i][0]);
+        for(var j = 1;j < arrx[i].length;j++)
+        {
+            cxt.lineTo(arrx[i][j],arry[i][j]); 
+        }
+        cxt.stroke();  
+    }    
+}
+
+</script>
+</body>
+</html>
