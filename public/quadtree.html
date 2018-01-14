@@ -1,0 +1,309 @@
+<!DOCTYPE HTML> 
+<html>
+<head>
+    <title>求取四叉树四进制M码</title>
+    <script type="text/javascript"></script>            
+    <meta charset = "utf-8"> 
+</head>
+
+<body>
+<!--选择文件-->
+<input id="fileinput" type="file" onchange="myfunction()"/>
+<br>
+<br>
+
+<script>
+
+function myfunction()
+{   
+    var col_row = new Array;
+    var a = new Array();
+    var b = new Array();
+    var c = new Array(); 
+    var newc = new Array();
+
+    for(i = 0;i < 8;i++)
+    {
+        a[i] = new Array(8);
+    }
+
+    for(i = 0;i < 8;i++)
+    {
+        b[i] = new Array(8);
+    }
+
+    for(i = 0;i < 8;i++)
+    {
+        c[i] = new Array(8);
+    }
+
+    for(i = 0;i < 8;i++)
+    {
+        newc[i] = new Array();
+        
+        for(j = 0;j < 8;j++)
+        {
+            newc[i][j] = new Array(3);
+        }
+    }
+
+    //读取文件到数组中
+    var file = document.getElementById("fileinput").files[0];   
+	var reader = new FileReader();
+	reader.readAsText(file);
+	reader.onload = function(e)
+	{
+		var str = this.result; 
+
+		var items = new Array();
+		items = str.split("\r\n"); 
+		
+        hang = items[0].split(",")[0];
+        lie = items[0].split(",")[1];
+
+        for (var i = 0;i < items.length - 1;i ++)
+        {
+            col_row[i] = new Array;
+        }
+
+        for (var i = 1;i < items.length ;i++)
+        { 
+            col_row[i - 1] = items[i].split(",");
+        }
+
+        for(var i = 0;i < hang;i++)
+        {
+            for(var j = 0;j < lie;j++)
+            {
+                a[i][j] = col_row[i][j];
+            }
+        }   
+        
+        document.write('四叉树矩阵为:' + '<br>');
+        output_two(a);
+        four_decimal(b);
+        document.write('各行列号对应的三位四进制m码为:' + '<br>');
+        Change(b,newc);
+        output_three(newc);
+        document.write('四叉树对应的四进制编码为:' + '<br>');
+        checkcombine_four(a, b);
+        output_two(b);
+
+
+
+
+    }
+}
+
+//输出三维数组中的所有值
+function output_three(newc)
+{
+    for(var i = 0;i < hang;i++)
+    {
+        for(var j = 0;j < lie;j++)
+        {
+            for(k=0;k<3;k++)
+            {
+                document.write(newc[i][j][k]);    
+            }
+            document.write('&nbsp;');
+        }
+        document.write('<br>');
+    }   
+}
+
+//输出二维数组中的所有值
+function output_two(a)
+{
+    for(var i = 0;i < hang;i++)
+    {
+        for(var j = 0;j < lie;j++)
+        {
+            document.write(a[i][j]);
+            for(var k = 0;k < (10 - a[i][j].toString().length);k++)
+            {
+                document.write('&nbsp;');    
+            }
+        }
+        document.write('<br>');
+    }   
+}
+
+//将十进制行列号转换为二进制
+function Tobinary(k)
+{
+    t = parseInt(k, 10).toString(2);
+    return t;
+}
+
+//得到四进制M码：利用函数four_decimal
+function four_decimal(b)
+{
+    for (i = 0; i < 8;i++)
+        for (j = 0; j < 8;j++)
+        {
+            var m = Tobinary(i);
+            var n = Tobinary(j);
+            m = parseInt(m);
+            n = parseInt(n);
+            b[i][j] = 2 * m + n;
+        }
+}
+
+//将m码转换为三位四进制m码
+function Change(b,newc)
+{
+    var t = new Array(3);
+    var q;
+    for (var i = 0; i < 8;i++)
+    for (var j = 0; j < 8; j++)
+    {
+        q = b[i][j];
+        t[0] = parseInt(q / 100);
+        q = q % 100;    
+        t[1] = parseInt(q / 10);
+        q = q % 10;
+        t[2] = q;
+        newc[i][j][0] = t[0];             
+        newc[i][j][1] = t[1];
+        newc[i][j][2] = t[2];
+    }
+}
+
+//判断m，n是否相等，相等返回1，不等返回0
+function eq(m, n)
+{
+    if (m == n)
+        return 1;
+    else
+        return 0;
+}
+
+function checkcombine_four(a, b)
+{
+    //第一层
+    var c = new Array();
+    for(i = 0; i < 4; i++)
+    {
+        c[i] = new Array(2); 
+    }
+    c[0][0] = 0; 
+    c[0][1] = 0;
+    c[1][0] = 0;
+    c[1][1] = 4;
+    c[2][0] = 4;
+    c[2][1] = 0;
+    c[3][0] = 4;
+    c[3][1] = 4;
+    
+    for (var i = 0; i < 4; i++)
+    {
+        var w = 0;
+        for (var m = c[i][0]; m < 4; m++)
+        {
+            for (var n = c[i][1]; n < 3; n++)
+                w += eq(a[m][n], a[m][n + 1]);
+            if (w == 12)//16个值属性一样
+            {
+                for (var m = c[i][0]; m < c[i][0] + 4; m++)
+                {
+                    for (var n = c[i][1]; n < c[i][1] + 4; n++)
+                    {
+                        b[m][n] = b[c[i][0]][c[i][1]];
+                    }
+                }      
+            }
+        }
+    }
+
+    //第二层
+    var d = new Array();
+    for(i = 0; i < 4; i++)
+    {
+        d[i] = new Array(2); 
+    }
+    d[0][0] = 0; 
+    d[0][1] = 0;
+    d[1][0] = 0;
+    d[1][1] = 2;
+    d[2][0] = 2;
+    d[2][1] = 0;
+    d[3][0] = 2;
+    d[3][1] = 2;
+
+    var e = new Array();
+    for(i = 0; i < 4; i++)
+    {
+        e[i] = new Array(2); 
+    }
+    e[0][0] = 0; 
+    e[0][1] = 4;
+    e[1][0] = 0;
+    e[1][1] = 6;
+    e[2][0] = 2;
+    e[2][1] = 4;
+    e[3][0] = 2;
+    e[3][1] = 6;
+
+    var f = new Array();
+    for(i = 0; i < 4; i++)
+    {
+        f[i] = new Array(2); 
+    }
+    f[0][0] = 4; 
+    f[0][1] = 0;
+    f[1][0] = 4;
+    f[1][1] = 2;
+    f[2][0] = 6;
+    f[2][1] = 0;
+    f[3][0] = 6;
+    f[3][1] = 2;
+    
+    var g = new Array();
+    for(i = 0; i < 4; i++)
+    {
+        g[i] = new Array(2); 
+    }
+    g[0][0] = 4; 
+    g[0][1] = 4;
+    g[1][0] = 4;
+    g[1][1] = 6;
+    g[2][0] = 6;
+    g[2][1] = 4;
+    g[3][0] = 6;
+    g[3][1] = 6;
+    
+    judge_four(a, b, d);
+    judge_four(a, b, e);
+    judge_four(a, b, f);
+    judge_four(a, b, g);
+}
+
+//判断数组c表示的矩形范围内的值是否一样，若一样就更新数组b
+function judge_four(a, b, c)
+{
+    for (var i = 0; i < 4; i++)
+    {
+        var w = 0;
+        for (var m = c[i][0]; m <c[i][0] + 2; m++)
+        for (var n = c[i][1]; n <c[i][1] + 1; n++)
+            w += eq(a[m][n], a[m][n + 1]);
+        if (w == 2)//4个值属性一样
+        {
+            for (var m = c[i][0]; m <c[i][0] + 2; m++)
+            {
+                for (var n = c[i][1]; n < c[i][1] + 2; n++)
+                {
+                    var q = b[c[i][0]][c[i][1]];
+                    var p = q.toString();
+                    b[m][n] = p.substring(0,2);
+                }
+            }
+        }
+    }
+}
+
+</script>
+</body>
+</html>
+</DOCTYPE>
